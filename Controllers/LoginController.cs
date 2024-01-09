@@ -12,22 +12,21 @@ namespace ToDoListApp.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private IConfiguration _config;
+        private ILoginService _loginService;
         
-        public LoginController(IConfiguration config)
+        public LoginController(ILoginService loginService)
         {
-            _config = config;
+            _loginService = loginService;
         }
 
         [HttpPost]
         public IActionResult Login([FromBody] LoginRequestModel loginRequest)
         {
-            var loginService = new LoginService(_config);
-            var user = loginService.AuthenticateUser(loginRequest);
+            var user = _loginService.AuthenticateUser(loginRequest);
 
             if (user != null)
             {
-                var token = loginService.GenerateJsonWebToken();
+                var token = _loginService.GenerateJsonWebToken();
 
                 return Ok(token);
             }
