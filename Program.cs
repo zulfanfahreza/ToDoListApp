@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ToDoDbContext>(opt => opt.UseInMemoryDatabase("TodoList"));
 
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IToDoService, ToDoService>();
 
 var app = builder.Build();
 
