@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoListApp.Models;
 using ToDoListApp.DatabaseContext;
 using Microsoft.AspNetCore.Authorization;
+using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
@@ -14,28 +15,24 @@ namespace ToDoListApp.Controllers
     [Authorize]
     public class ToDoController : ControllerBase
     {
-        private readonly ToDoDbContext _dbContext;
+        private readonly IToDoService _toDoService;
 
-        public ToDoController(ToDoDbContext dbContext)
+        public ToDoController(IToDoService toDoService)
         {
-            _dbContext = dbContext;
-            if (_dbContext.ToDoItems.Count() == 0)
-            {
-                _dbContext.ToDoItems.Add(new ToDoItemModel { Name = "Item1" });
-                _dbContext.SaveChanges();
-            }
+            _toDoService = toDoService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ToDoItemModel>>> GetToDoItems()
         {
-            return await _dbContext.ToDoItems.ToListAsync();
+            var items = _toDoService.GetAllItems();
+            return await items;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ToDoItemModel>> GetToDoItem(int id)
         {
-            var toDoItems = await _dbContext.ToDoItems.FindAsync(id);
+            var toDoItems = await _toDoService.GetById(id);
             if (toDoItems == null)
             {
                 return NotFound();
@@ -47,8 +44,7 @@ namespace ToDoListApp.Controllers
         [HttpPost]
         public async Task<ActionResult<ToDoItemModel>> PostToDoItem(ToDoItemModel toDoItem)
         {
-            _dbContext.ToDoItems.Add(toDoItem);
-            await _dbContext.SaveChangesAsync();
+            _toDoService.AddItem(toDoItem);
 
             return CreatedAtAction(nameof(GetToDoItem), new {id = toDoItem.Id}, toDoItem);
         }
@@ -56,17 +52,11 @@ namespace ToDoListApp.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
         {
-            var toDoItem = await _dbContext.ToDoItems.FindAsync(id);
+            var toDoItem = await _toDoService.UpdateItem(id, item);
             if (toDoItem == null)
             {
                 return NotFound();
             }
-
-            toDoItem.Name = item.Name;
-            toDoItem.IsComplete = item.IsComplete;
-
-            _dbContext.ToDoItems.Update(toDoItem);
-            await _dbContext.SaveChangesAsync();
 
             return toDoItem;
         }
@@ -74,14 +64,13 @@ namespace ToDoListApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var toDoItem = await _dbContext.ToDoItems.FindAsync(id);
+            var toDoItem = await _toDoService.GetById(id);
             if (toDoItem == null) 
             { 
                 return NotFound();
             }
 
-            _dbContext.ToDoItems.Remove(toDoItem);
-            await _dbContext.SaveChangesAsync();
+            _toDoService.DeleteItem(toDoItem);
             return NoContent();
         }
     }
