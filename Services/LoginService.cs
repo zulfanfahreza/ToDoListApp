@@ -5,7 +5,7 @@ using ToDoListApp.Models;
 
 namespace ToDoListApp.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
         private IConfiguration _config;
         public LoginService(IConfiguration config)
@@ -13,16 +13,16 @@ namespace ToDoListApp.Services
             _config = config;
         }
 
-        public LoginRequestModel AuthenticateUser(LoginRequestModel userInfo)
+        public LoginRequestModel AuthenticateUser(LoginRequestModel request)
         {
             LoginRequestModel user = null;
 
-            if (userInfo.Username == "zulfanfahreza" &&  userInfo.Password == "zulfan12345")
+            if (request.Username == "zulfanfahreza" &&  request.Password == "zulfan12345")
             {
                 user = new LoginRequestModel
                 {
-                    Username = userInfo.Username,
-                    Password = userInfo.Password,
+                    Username = request.Username,
+                    Password = request.Password,
                 };
             }
 
