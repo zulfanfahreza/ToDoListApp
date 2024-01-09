@@ -52,9 +52,17 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel toDoItem)
+        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
         {
-            toDoItem.Id = id;
+            var toDoItem = await _dbContext.ToDoItems.FindAsync(id);
+            if (toDoItem == null)
+            {
+                return NotFound();
+            }
+
+            toDoItem.Name = item.Name;
+            toDoItem.IsComplete = item.IsComplete;
+
             _dbContext.ToDoItems.Update(toDoItem);
             await _dbContext.SaveChangesAsync();
 
