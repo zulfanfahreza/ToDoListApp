@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoListApp.Models;
 using ToDoListApp.DatabaseContext;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoListApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ToDoController : ControllerBase
     {
         private readonly ToDoDbContext _dbContext;
