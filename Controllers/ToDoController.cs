@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Asp.Versioning;
 using ToDoListApp.Models;
 using ToDoListApp.DatabaseContext;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +11,9 @@ using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     [Authorize]
     public class ToDoController : ControllerBase
     {
@@ -23,55 +25,161 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDoItemModel>>> GetToDoItems()
+        public async Task<ActionResult<ItemCollectionResponseModel>> GetAllItems()
         {
-            var items = _toDoService.GetAllItems();
-            return await items;
+            try
+            {
+                var items = await _toDoService.GetAllItems();
+                var response = new ItemCollectionResponseModel
+                {
+                    Items = items,
+                    Pagination = new Pagination
+                    {
+                        Total = items.Count,
+                        Page = 1,
+                        Sort = 1,
+                        SortBy = "Id",
+                        Limit = items.Count
+                    }
+                };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(GetAllItems)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+                
+                return BadRequest(errorResponse);
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> GetToDoItem(int id)
+        public async Task<ActionResult<ToDoItemModel>> GetItemById(int id)
         {
-            var toDoItems = await _toDoService.GetById(id);
-            if (toDoItems == null)
+            try
             {
-                return NotFound();
-            }
+                var toDoItems = await _toDoService.GetById(id);
+                if (toDoItems == null)
+                {
+                    var errorResponse = new ErrorResponseModel
+                    {
+                        Error = $"{nameof(GetItemById)} Exception",
+                        Message = $"Item with id {id} cannot be found",
+                        StatusCode = StatusCodes.Status404NotFound
+                    };
+                    return NotFound(errorResponse);
+                }
 
-            return toDoItems;
+                return toDoItems;
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(GetItemById)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<ToDoItemModel>> PostToDoItem(ToDoItemModel toDoItem)
         {
-            _toDoService.AddItem(toDoItem);
+            try
+            {
+                _toDoService.AddItem(toDoItem);
 
-            return CreatedAtAction(nameof(GetToDoItem), new {id = toDoItem.Id}, toDoItem);
+                return CreatedAtAction(nameof(GetAllItems), new { id = toDoItem.Id }, toDoItem);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(PostToDoItem)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
+        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  UpdateItemRequestModel request)
         {
-            var toDoItem = await _toDoService.UpdateItem(id, item);
-            if (toDoItem == null)
+            try
             {
-                return NotFound();
+                var toDoItem = await _toDoService.UpdateItem(id, request);
+                if (toDoItem == null)
+                {
+                    var errorResponse = new ErrorResponseModel
+                    {
+                        Error = $"{nameof(PutToDoItem)} Exception",
+                        Message = $"Item with id {id} cannot be found",
+                        StatusCode = StatusCodes.Status404NotFound
+                    };
+                    return NotFound(errorResponse);
+                }
+                var response = new UpdateItemResponseModel
+                {
+                    Item = toDoItem,
+                    UpdatedAt = DateTime.Now
+                };
+                return response;
             }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(PutToDoItem)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
 
-            return toDoItem;
+                return BadRequest(errorResponse);
+            }
+            
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var toDoItem = await _toDoService.GetById(id);
-            if (toDoItem == null) 
-            { 
-                return NotFound();
-            }
+            try
+            {
+                var toDoItem = await _toDoService.GetById(id);
+                if (toDoItem == null)
+                {
+                    var errorResponse = new ErrorResponseModel
+                    {
+                        Error = $"{nameof(DeleteItem)} Exception",
+                        Message = $"Item with id {id} cannot be found",
+                        StatusCode = StatusCodes.Status404NotFound
+                    };
+                    return NotFound(errorResponse);
+                }
 
-            _toDoService.DeleteItem(toDoItem);
-            return NoContent();
+                _toDoService.DeleteItem(toDoItem);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(DeleteItem)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+            
         }
     }
 }

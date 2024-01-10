@@ -7,7 +7,7 @@ namespace ToDoListApp.Services
         Task<List<ToDoItemModel>> GetAllItems();
         Task<ToDoItemModel> GetById(int id);
         void AddItem(ToDoItemModel item);
-        Task<ToDoItemModel> UpdateItem(int id, ToDoItemModel request);
+        Task<ToDoItemModel> UpdateItem(int id, UpdateItemRequestModel request);
         void DeleteItem(ToDoItemModel request);
     }
 }

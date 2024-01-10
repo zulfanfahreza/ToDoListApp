@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Asp.Versioning;
+using Newtonsoft.Json;
 using ToDoListApp.Models;
 using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class LoginController : ControllerBase
     {
         private ILoginService _loginService;
@@ -22,16 +25,37 @@ namespace ToDoListApp.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginRequestModel loginRequest)
         {
-            var user = _loginService.AuthenticateUser(loginRequest);
-
-            if (user != null)
+            try
             {
+                var user = _loginService.AuthenticateUser(loginRequest);
+
+                if (user == null)
+                {
+                    var errorResponse = new ErrorResponseModel
+                    {
+                        Error = $"{nameof(Login)} Exception",
+                        Message = $"User with request {JsonConvert.SerializeObject(loginRequest)} is unauthorized to access",
+                        StatusCode = StatusCodes.Status401Unauthorized
+                    };
+                    return Unauthorized(errorResponse);
+                }
+
                 var token = _loginService.GenerateJsonWebToken();
 
                 return Ok(token);
             }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponseModel
+                {
+                    Error = $"{nameof(Login)} Exception",
+                    Message = ex.Message,
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
 
-            return Unauthorized();
+                return BadRequest(errorResponse);
+            }
+            
         }
     }
 }
