@@ -23,10 +23,22 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDoItemModel>>> GetToDoItems()
+        public async Task<ActionResult<ItemCollectionResponseModel>> GetToDoItems()
         {
-            var items = _toDoService.GetAllItems();
-            return await items;
+            var items = await _toDoService.GetAllItems();
+            var response = new ItemCollectionResponseModel
+            {
+                Items = items,
+                Pagination = new Pagination
+                {
+                    Total = items.Count,
+                    Page = 1,
+                    Sort = 1,
+                    SortBy = "Id",
+                    Limit = items.Count
+                }
+            };
+            return response;
         }
 
         [HttpGet("{id}")]
@@ -50,7 +62,7 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel request)
+        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
         {
             var toDoItem = await _toDoService.UpdateItem(id, request);
             if (toDoItem == null)
