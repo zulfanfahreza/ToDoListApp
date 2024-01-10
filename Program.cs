@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Asp.Versioning;
 using ToDoListApp.DatabaseContext;
 using ToDoListApp.Services;
 
@@ -37,6 +38,13 @@ builder.Services.AddDbContext<ToDoDbContext>(opt => opt.UseInMemoryDatabase("Tod
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IToDoService, ToDoService>();
+
+builder.Services.AddApiVersioning(x =>
+{
+    x.DefaultApiVersion = new ApiVersion(1, 0);
+    x.AssumeDefaultVersionWhenUnspecified = true;
+    x.ReportApiVersions = true;
+});
 
 var app = builder.Build();
 

@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Asp.Versioning;
 using ToDoListApp.Models;
 using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class LoginController : ControllerBase
     {
         private ILoginService _loginService;

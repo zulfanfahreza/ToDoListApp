@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Asp.Versioning;
 using ToDoListApp.Models;
 using ToDoListApp.DatabaseContext;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +11,9 @@ using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     [Authorize]
     public class ToDoController : ControllerBase
     {
