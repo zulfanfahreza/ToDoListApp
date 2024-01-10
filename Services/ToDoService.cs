@@ -36,7 +36,7 @@ namespace ToDoListApp.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<ToDoItemModel> UpdateItem(int id, ToDoItemModel request)
+        public async Task<ToDoItemModel> UpdateItem(int id, UpdateItemRequestModel request)
         {
             var toDoItem = await _dbContext.ToDoItems.FindAsync(id);
             if (toDoItem == null)

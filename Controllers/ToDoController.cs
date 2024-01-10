@@ -62,15 +62,19 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
+        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  UpdateItemRequestModel request)
         {
             var toDoItem = await _toDoService.UpdateItem(id, request);
             if (toDoItem == null)
             {
                 return NotFound();
             }
-            
-            return toDoItem;
+            var response = new UpdateItemResponseModel
+            {
+                Item = toDoItem,
+                UpdatedAt = DateTime.Now
+            };
+            return response;
         }
 
         [HttpDelete("{id}")]
