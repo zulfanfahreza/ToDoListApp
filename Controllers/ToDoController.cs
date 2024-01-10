@@ -10,7 +10,7 @@ using ToDoListApp.Services;
 
 namespace ToDoListApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     [Authorize]
     public class ToDoController : ControllerBase
@@ -50,14 +50,14 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel item)
+        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  ToDoItemModel request)
         {
-            var toDoItem = await _toDoService.UpdateItem(id, item);
+            var toDoItem = await _toDoService.UpdateItem(id, request);
             if (toDoItem == null)
             {
                 return NotFound();
             }
-
+            
             return toDoItem;
         }
 
