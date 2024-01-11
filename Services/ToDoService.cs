@@ -18,27 +18,27 @@ namespace ToDoListApp.Services
             }
         }
 
-        public async Task<List<ToDoItemModel>> GetAllItems()
+        public List<ToDoItemModel> GetAllItems()
         {
-            var items = await _dbContext.ToDoItems.ToListAsync();
+            var items = _dbContext.ToDoItems.ToList();
             return items;
         }
 
-        public async Task<ToDoItemModel> GetById(int id)
+        public ToDoItemModel GetById(int id)
         {
-            var item = await _dbContext.ToDoItems.FindAsync(id);
+            var item = _dbContext.ToDoItems.Find(id);
             return item;
         }
 
-        public async void AddItem(ToDoItemModel item)
+        public void AddItem(ToDoItemModel item)
         {
             _dbContext.ToDoItems.Add(item);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
         }
 
-        public async Task<ToDoItemModel> UpdateItem(int id, UpdateItemRequestModel request)
+        public ToDoItemModel UpdateItem(int id, UpdateItemRequestModel request)
         {
-            var toDoItem = await _dbContext.ToDoItems.FindAsync(id);
+            var toDoItem = _dbContext.ToDoItems.Find(id);
             if (toDoItem == null)
             {
                 return toDoItem;
@@ -48,7 +48,7 @@ namespace ToDoListApp.Services
             toDoItem.IsComplete = request.IsComplete;
 
             _dbContext.ToDoItems.Update(toDoItem);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             return toDoItem;
         }
