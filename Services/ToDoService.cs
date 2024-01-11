@@ -6,9 +6,9 @@ namespace ToDoListApp.Services
 {
     public class ToDoService : IToDoService
     {
-        private readonly ToDoDbContext _dbContext;
+        private readonly IToDoDbContext _dbContext;
 
-        public ToDoService (ToDoDbContext dbContext)
+        public ToDoService (IToDoDbContext dbContext)
         {
             _dbContext = dbContext;
             if (_dbContext.ToDoItems.Count() == 0)
