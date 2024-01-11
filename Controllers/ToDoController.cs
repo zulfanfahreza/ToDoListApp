@@ -29,7 +29,7 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var items = await _toDoService.GetAllItems();
+                var items = _toDoService.GetAllItems();
                 var response = new ItemCollectionResponseModel
                 {
                     Items = items,
@@ -62,7 +62,7 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var toDoItems = await _toDoService.GetById(id);
+                var toDoItems = _toDoService.GetById(id);
                 if (toDoItems == null)
                 {
                     var errorResponse = new ErrorResponseModel
@@ -116,7 +116,7 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var toDoItem = await _toDoService.UpdateItem(id, request);
+                var toDoItem = _toDoService.UpdateItem(id, request);
                 if (toDoItem == null)
                 {
                     var errorResponse = new ErrorResponseModel
@@ -153,7 +153,7 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var toDoItem = await _toDoService.GetById(id);
+                var toDoItem = _toDoService.GetById(id);
                 if (toDoItem == null)
                 {
                     var errorResponse = new ErrorResponseModel
