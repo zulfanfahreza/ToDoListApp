@@ -12,14 +12,14 @@ using ToDoListApp.Services;
 namespace ToDoListApp.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/ToDo")]
+    [ApiVersion("2.0")]
+    [Route("api/v{v:apiVersion}/ToDo")]
     [Authorize]
-    public class ToDoController : ControllerBase
+    public class ToDoControllerV2 : ControllerBase
     {
         private readonly IToDoService _toDoService;
 
-        public ToDoController(IToDoService toDoService)
+        public ToDoControllerV2(IToDoService toDoService)
         {
             _toDoService = toDoService;
         }
@@ -27,7 +27,7 @@ namespace ToDoListApp.Controllers
         [HttpGet("version")]
         public IActionResult VersionTrial()
         {
-            return new OkObjectResult("ToDo from v1 controller");
+            return new OkObjectResult("ToDo from v2 controller");
         }
 
         [HttpGet]
@@ -58,7 +58,7 @@ namespace ToDoListApp.Controllers
                     Message = ex.Message,
                     StatusCode = StatusCodes.Status400BadRequest
                 };
-                
+
                 return BadRequest(errorResponse);
             }
         }
@@ -118,7 +118,7 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  UpdateItemRequestModel request)
+        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id, UpdateItemRequestModel request)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace ToDoListApp.Controllers
 
                 return BadRequest(errorResponse);
             }
-            
+
         }
 
         [HttpDelete("{id}")]
@@ -185,7 +185,7 @@ namespace ToDoListApp.Controllers
 
                 return BadRequest(errorResponse);
             }
-            
+
         }
     }
 }
