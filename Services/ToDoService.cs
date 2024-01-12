@@ -26,7 +26,7 @@ namespace ToDoListApp.Services
 
         public ToDoItemModel GetById(int id)
         {
-            var item = _dbContext.ToDoItems.Find(id);
+            var item = _dbContext.ToDoItems.Where(x => x.Id.Equals(id)).SingleOrDefault();
             return item;
         }
 
@@ -38,7 +38,7 @@ namespace ToDoListApp.Services
 
         public ToDoItemModel UpdateItem(int id, UpdateItemRequestModel request)
         {
-            var toDoItem = _dbContext.ToDoItems.Find(id);
+            var toDoItem = _dbContext.ToDoItems.Where(x => x.Id.Equals(id)).SingleOrDefault();
             if (toDoItem == null)
             {
                 return toDoItem;
@@ -53,10 +53,10 @@ namespace ToDoListApp.Services
             return toDoItem;
         }
 
-        public async void DeleteItem(ToDoItemModel request)
+        public void DeleteItem(ToDoItemModel request)
         {
             _dbContext.ToDoItems.Remove(request);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
         }
     }
 }
