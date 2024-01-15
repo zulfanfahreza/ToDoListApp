@@ -96,13 +96,13 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(ToDoItemModel toDoItem)
+        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(AddUpdateItemRequestModel toDoItem)
         {
             try
             {
                 _toDoService.AddItem(toDoItem);
 
-                return CreatedAtAction(nameof(GetAllItems), new { id = toDoItem.Id }, toDoItem);
+                return CreatedAtAction(nameof(GetAllItems), toDoItem);
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id, UpdateItemRequestModel request)
+        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id, AddUpdateItemRequestModel request)
         {
             try
             {
