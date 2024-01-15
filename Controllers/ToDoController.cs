@@ -36,6 +36,17 @@ namespace ToDoListApp.Controllers
             try
             {
                 var items = _toDoService.GetAllItems();
+                if (items.Count() == 0)
+                {
+                    var errorResponse = new ErrorResponseModel
+                    {
+                        Error = $"{nameof(GetItemById)} Exception",
+                        Message = $"Item cannot be found",
+                        StatusCode = StatusCodes.Status404NotFound
+                    };
+                    return NotFound(errorResponse);
+                }
+
                 var response = new ItemCollectionResponseModel
                 {
                     Items = items,
@@ -96,13 +107,13 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(ToDoItemModel toDoItem)
+        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(AddUpdateItemRequestModel toDoItem)
         {
             try
             {
                 _toDoService.AddItem(toDoItem);
 
-                return CreatedAtAction(nameof(GetAllItems), new { id = toDoItem.Id }, toDoItem);
+                return CreatedAtAction(nameof(GetAllItems), toDoItem);
             }
             catch (Exception ex)
             {
@@ -118,7 +129,7 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  UpdateItemRequestModel request)
+        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  AddUpdateItemRequestModel request)
         {
             try
             {

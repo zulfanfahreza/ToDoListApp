@@ -11,11 +11,6 @@ namespace ToDoListApp.Services
         public ToDoService (IToDoDbContext dbContext)
         {
             _dbContext = dbContext;
-            if (_dbContext.ToDoItems.Count() == 0)
-            {
-                _dbContext.ToDoItems.Add(new ToDoItemModel { Name = "Item1" });
-                _dbContext.SaveChanges();
-            }
         }
 
         public List<ToDoItemModel> GetAllItems()
@@ -30,13 +25,19 @@ namespace ToDoListApp.Services
             return item;
         }
 
-        public void AddItem(ToDoItemModel item)
+        public void AddItem(AddUpdateItemRequestModel request)
         {
+            var item = new ToDoItemModel
+            {
+                Id = GenerateId(),
+                Name = request.Name,
+                IsComplete = request.IsComplete,
+            };
             _dbContext.ToDoItems.Add(item);
             _dbContext.SaveChanges();
         }
 
-        public ToDoItemModel UpdateItem(int id, UpdateItemRequestModel request)
+        public ToDoItemModel UpdateItem(int id, AddUpdateItemRequestModel request)
         {
             var toDoItem = _dbContext.ToDoItems.Where(x => x.Id.Equals(id)).SingleOrDefault();
             if (toDoItem == null)
@@ -57,6 +58,23 @@ namespace ToDoListApp.Services
         {
             _dbContext.ToDoItems.Remove(request);
             _dbContext.SaveChanges();
+        }
+
+        private int GenerateId()
+        {
+            int generatedId;
+            var latestItem = _dbContext.ToDoItems.OrderByDescending(x => x.Id).FirstOrDefault();
+
+            if (latestItem == null || string.IsNullOrEmpty(latestItem.Id.ToString()))
+            {
+                generatedId = 1;
+                return generatedId;
+            }
+
+            var latestId = latestItem.Id;
+            generatedId = latestItem.Id + 1;
+
+            return generatedId;
         }
     }
 }
