@@ -32,6 +32,7 @@ namespace ToDoListApp.Services
                 Id = GenerateId(),
                 Name = request.Name,
                 IsComplete = request.IsComplete,
+                CreatedAt = DateTime.Now
             };
             _dbContext.ToDoItems.Add(item);
             _dbContext.SaveChanges();
@@ -47,6 +48,7 @@ namespace ToDoListApp.Services
 
             toDoItem.Name = request.Name;
             toDoItem.IsComplete = request.IsComplete;
+            toDoItem.UpdatedAt = DateTime.Now;
 
             _dbContext.ToDoItems.Update(toDoItem);
             _dbContext.SaveChanges();

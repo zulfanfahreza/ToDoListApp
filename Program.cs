@@ -34,7 +34,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ToDoDbContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddDbContext<ToDoDbContext>(
+    opt => {
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 35));
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        opt.UseMySql(connectionString, serverVersion);
+    });
 
 builder.Services.AddScoped<IToDoDbContext, ToDoDbContext>();
 builder.Services.AddScoped<ILoginService, LoginService>();

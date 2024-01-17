@@ -1,6 +1,6 @@
 ﻿namespace ToDoListApp.Models
 {
-    public class ToDoItemModel
+    public class ToDoItemModel : BaseEntityModel
     {
         public int Id { get; set; }
         public string? Name { get; set; }
