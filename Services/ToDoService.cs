@@ -13,19 +13,19 @@ namespace ToDoListApp.Services
             _dbContext = dbContext;
         }
 
-        public List<ToDoItemModel> GetAllItems()
+        public async Task<List<ToDoItemModel>> GetAllItems()
         {
-            var items = _dbContext.ToDoItems.ToList();
+            var items = await _dbContext.ToDoItems.ToListAsync();
             return items;
         }
 
-        public ToDoItemModel GetById(int id)
+        public async Task<ToDoItemModel> GetById(int id)
         {
-            var item = _dbContext.ToDoItems.Where(x => x.Id.Equals(id)).SingleOrDefault();
+            var item = await _dbContext.ToDoItems.FindAsync(id);
             return item;
         }
 
-        public void AddItem(AddUpdateItemRequestModel request)
+        public async Task<ToDoItemModel> AddItem(AddUpdateItemRequestModel request)
         {
             var item = new ToDoItemModel
             {
@@ -35,10 +35,11 @@ namespace ToDoListApp.Services
                 CreatedAt = DateTime.Now
             };
             _dbContext.ToDoItems.Add(item);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
+            return item;
         }
 
-        public ToDoItemModel UpdateItem(int id, AddUpdateItemRequestModel request)
+        public async Task<ToDoItemModel> UpdateItem(int id, AddUpdateItemRequestModel request)
         {
             var toDoItem = _dbContext.ToDoItems.Where(x => x.Id.Equals(id)).SingleOrDefault();
             if (toDoItem == null)
@@ -51,15 +52,15 @@ namespace ToDoListApp.Services
             toDoItem.UpdatedAt = DateTime.Now;
 
             _dbContext.ToDoItems.Update(toDoItem);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return toDoItem;
         }
 
-        public void DeleteItem(ToDoItemModel request)
+        public async Task DeleteItem(ToDoItemModel request)
         {
             _dbContext.ToDoItems.Remove(request);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         private int GenerateId()
