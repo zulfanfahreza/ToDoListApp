@@ -8,6 +8,8 @@ using ToDoListApp.Models;
 using ToDoListApp.DatabaseContext;
 using Microsoft.AspNetCore.Authorization;
 using ToDoListApp.Services;
+using MediatR;
+using ToDoListApp.Handler;
 
 namespace ToDoListApp.Controllers
 {
@@ -18,10 +20,13 @@ namespace ToDoListApp.Controllers
     public class ToDoController : ControllerBase
     {
         private readonly IToDoService _toDoService;
+        private readonly IMediator _mediator;
 
-        public ToDoController(IToDoService toDoService)
+        public ToDoController(IToDoService toDoService,
+            IMediator mediator)
         {
             _toDoService = toDoService;
+            _mediator = mediator;
         }
 
         [HttpGet("version")]
@@ -35,7 +40,7 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var items = _toDoService.GetAllItems();
+                var items = await _mediator.Send(new GetAllItemsHandler.Query());
                 if (items.Count() == 0)
                 {
                     var errorResponse = new ErrorResponseModel
@@ -79,8 +84,11 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var toDoItems = _toDoService.GetById(id);
-                if (toDoItems == null)
+                var toDoItems = await _mediator.Send(new GetItemByIdHandler.Query
+                {
+                    Id = id
+                });
+                if (toDoItems is null)
                 {
                     var errorResponse = new ErrorResponseModel
                     {
@@ -107,13 +115,16 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(AddUpdateItemRequestModel toDoItem)
+        public async Task<ActionResult<ToDoItemModel>> PostToDoItem(AddUpdateItemRequestModel request)
         {
             try
             {
-                _toDoService.AddItem(toDoItem);
+                var toDoItem = await _mediator.Send(new AddItemHandler.Query 
+                {
+                    Parameter = request
+                });
 
-                return CreatedAtAction(nameof(GetAllItems), toDoItem);
+                return CreatedAtAction(nameof(PostToDoItem), toDoItem);
             }
             catch (Exception ex)
             {
@@ -129,11 +140,16 @@ namespace ToDoListApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateItemResponseModel>> PutToDoItem(int id,  AddUpdateItemRequestModel request)
+        public async Task<ActionResult<ToDoItemModel>> PutToDoItem(int id,  AddUpdateItemRequestModel request)
         {
             try
             {
-                var toDoItem = _toDoService.UpdateItem(id, request);
+                var toDoItem = await _mediator.Send(new UpdateItemHandler.Query
+                {
+                    Id = id,
+                    Parameter = request
+                });
+
                 if (toDoItem == null)
                 {
                     var errorResponse = new ErrorResponseModel
@@ -144,12 +160,8 @@ namespace ToDoListApp.Controllers
                     };
                     return NotFound(errorResponse);
                 }
-                var response = new UpdateItemResponseModel
-                {
-                    Item = toDoItem,
-                    UpdatedAt = DateTime.Now
-                };
-                return response;
+
+                return toDoItem;
             }
             catch (Exception ex)
             {
@@ -170,7 +182,11 @@ namespace ToDoListApp.Controllers
         {
             try
             {
-                var toDoItem = _toDoService.GetById(id);
+                var toDoItem = await _mediator.Send(new GetItemByIdHandler.Query
+                {
+                    Id= id
+                });
+
                 if (toDoItem == null)
                 {
                     var errorResponse = new ErrorResponseModel
@@ -182,7 +198,11 @@ namespace ToDoListApp.Controllers
                     return NotFound(errorResponse);
                 }
 
-                _toDoService.DeleteItem(toDoItem);
+                await _mediator.Send(new DeleteItemHandler.Query
+                {
+                    Parameter = toDoItem
+                });
+
                 return NoContent();
             }
             catch (Exception ex)
