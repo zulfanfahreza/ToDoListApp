@@ -23,7 +23,7 @@ namespace ToDoListApp.Services
             _logger.LogDebug("LoginService.AuthenticateUser", $"Start authenticating user with request: {JsonConvert.SerializeObject(request)}");
             LoginRequestModel user = null;
 
-            if (request.Username == "zulfanfahreza" &&  request.Password == "zulfan12345")
+            if (request.Username == _config["Authentication:Username"] &&  request.Password == _config["Authentication:Password"])
             {
                 user = new LoginRequestModel
                 {
