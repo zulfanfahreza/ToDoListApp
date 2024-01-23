@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\MySql\20240116094819_initial-migration.cs" />
+    <Compile Remove="Migrations\MySql\20240116094819_initial-migration.Designer.cs" />
+    <Compile Remove="Migrations\MySql\20240117020706_add-created-and-updated-datetime.cs" />
+    <Compile Remove="Migrations\MySql\20240117020706_add-created-and-updated-datetime.Designer.cs" />
+    <Compile Remove="Migrations\MySql\ToDoDbContextModelSnapshot.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
@@ -28,5 +36,9 @@
   <ItemGroup>
 		<InternalsVisibleTo Include="ToDoIntegrationTest" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\MySql\" />
+  </ItemGroup>
   
 </Project>
