@@ -5,6 +5,7 @@ using System.Text;
 using Asp.Versioning;
 using ToDoListApp.DatabaseContext;
 using ToDoListApp.Services;
+using ToDoListApp.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddDbContext<ToDoDbContext>(
 builder.Services.AddScoped<IToDoDbContext, ToDoDbContext>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IToDoService, ToDoService>();
+builder.Services.AddScoped<ILogging, Logging>();
 
 builder.Services.AddApiVersioning(x =>
 {
@@ -55,6 +57,10 @@ builder.Services.AddApiVersioning(x =>
     {
         options.GroupNameFormat = "'v'VVV";
         options.SubstituteApiVersionInUrl = true;
+    });
+
+builder.Services.AddMediatR(cfg => {
+        cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
     });
 
 var app = builder.Build();
