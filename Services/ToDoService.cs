@@ -37,7 +37,6 @@ namespace ToDoListApp.Services
             _logger.LogDebug("ToDoService.AddItem", $"Start adding item to db with request: {JsonConvert.SerializeObject(request)}");
             var item = new ToDoItemModel
             {
-                Id = GenerateId(),
                 Name = request.Name,
                 IsComplete = request.IsComplete,
                 CreatedAt = DateTime.Now

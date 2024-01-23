@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ToDoListApp.Migrations
+namespace ToDoListApp.Migrations.MySql
 {
     /// <inheritdoc />
     public partial class addcreatedandupdateddatetime : Migration

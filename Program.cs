@@ -6,6 +6,7 @@ using Asp.Versioning;
 using ToDoListApp.DatabaseContext;
 using ToDoListApp.Services;
 using ToDoListApp.Utilities;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,12 +36,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ToDoDbContext>(
-    opt => {
-        var serverVersion = new MySqlServerVersion(new Version(8, 0, 35));
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        opt.UseMySql(connectionString, serverVersion);
-    });
+//Add DB configuration
+var selectedDb = builder.Configuration.GetConnectionString("Selected");
+if (string.IsNullOrEmpty(selectedDb))
+{
+    throw new Exception("Database not selected. Please check appsettings.json");
+}
+
+switch(selectedDb.ToUpper())
+{
+    case "MYSQL":
+        builder.Services.AddDbContext<ToDoDbContext>(
+            opt => {
+                var serverVersion = new MySqlServerVersion(new Version(8, 0, 35));
+                var connectionString = builder.Configuration.GetConnectionString("Options:MySql");
+                opt.UseMySql(connectionString, serverVersion);
+            });
+        break;
+    case "SQLSERVER":
+        builder.Services.AddDbContext<ToDoDbContext>(
+            opt => {
+                var connectionString = builder.Configuration.GetConnectionString("Options:SqlServer");
+                opt.UseSqlServer(connectionString);
+            });
+        break;
+    default:
+        throw new Exception("No Known Database match selected database");
+}
 
 builder.Services.AddScoped<IToDoDbContext, ToDoDbContext>();
 builder.Services.AddScoped<ILoginService, LoginService>();
