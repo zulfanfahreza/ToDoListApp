@@ -1,20 +1,26 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ToDoListApp.Models;
+using ToDoListApp.Utilities;
 
 namespace ToDoListApp.Services
 {
     public class LoginService : ILoginService
     {
         private IConfiguration _config;
-        public LoginService(IConfiguration config)
+        private ILogging _logger;
+        public LoginService(IConfiguration config, ILogging logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public LoginRequestModel AuthenticateUser(LoginRequestModel request)
         {
+            _logger.LogDebug("LoginService.AuthenticateUser", $"Start authenticating user with request: {JsonConvert.SerializeObject(request)}");
             LoginRequestModel user = null;
 
             if (request.Username == "zulfanfahreza" &&  request.Password == "zulfan12345")
@@ -31,6 +37,7 @@ namespace ToDoListApp.Services
 
         public string GenerateJsonWebToken()
         {
+            _logger.LogDebug("LoginService.GenerateJsonWebToken", "Start generating Json Web Token");
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -41,6 +48,7 @@ namespace ToDoListApp.Services
                 signingCredentials: credentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            _logger.LogDebug("LoginService.GenerateJsonWebToken", $"Generated Token: {JsonConvert.SerializeObject(token)}");
             return token;
         }
     }
