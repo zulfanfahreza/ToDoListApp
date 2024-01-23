@@ -44,7 +44,7 @@ namespace ToDoListApp.Migrations.SqlServer
 
                     b.HasKey("Id");
 
-                    b.ToTable("ToDoItems", (string)null);
+                    b.ToTable("ToDoItems");
                 });
 #pragma warning restore 612, 618
         }
