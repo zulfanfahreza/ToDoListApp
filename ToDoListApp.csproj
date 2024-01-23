@@ -12,6 +12,7 @@
     <Compile Remove="Migrations\MySql\20240116094819_initial-migration.Designer.cs" />
     <Compile Remove="Migrations\MySql\20240117020706_add-created-and-updated-datetime.cs" />
     <Compile Remove="Migrations\MySql\20240117020706_add-created-and-updated-datetime.Designer.cs" />
+    <Compile Remove="Migrations\MySql\MySqlToDoDbContextModelSnapshot.cs" />
     <Compile Remove="Migrations\MySql\ToDoDbContextModelSnapshot.cs" />
   </ItemGroup>
 

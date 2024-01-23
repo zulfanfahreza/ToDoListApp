@@ -8,7 +8,7 @@ using ToDoListApp.DatabaseContext;
 
 #nullable disable
 
-namespace ToDoListApp.Migrations
+namespace ToDoListApp.Migrations.SqlServer
 {
     [DbContext(typeof(ToDoDbContext))]
     partial class ToDoDbContextModelSnapshot : ModelSnapshot
@@ -44,7 +44,7 @@ namespace ToDoListApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ToDoItems");
+                    b.ToTable("ToDoItems", (string)null);
                 });
 #pragma warning restore 612, 618
         }
