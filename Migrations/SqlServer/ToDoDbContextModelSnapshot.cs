@@ -8,7 +8,7 @@ using ToDoListApp.DatabaseContext;
 
 #nullable disable
 
-namespace ToDoListApp.Migrations
+namespace ToDoListApp.Migrations.SqlServer
 {
     [DbContext(typeof(ToDoDbContext))]
     partial class ToDoDbContextModelSnapshot : ModelSnapshot
