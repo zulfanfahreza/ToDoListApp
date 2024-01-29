@@ -9,5 +9,6 @@ namespace ToDoListApp.DatabaseContext
         : base(options) { }
 
         public virtual DbSet<ToDoItemModel> ToDoItems {  get; set; }
+        public virtual DbSet<UserEntity> Users { get; set; }
     }
 }
